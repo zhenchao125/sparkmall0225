@@ -23,6 +23,5 @@ object CategoryTop10App {
         }.take(10)
         
         
-        
     }
 }
