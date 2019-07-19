@@ -5,7 +5,7 @@ import java.util.Properties
 import com.atguigu.sparkmall0225.common.bean.UserVisitAction
 import com.atguigu.sparkmall0225.offline.bean.{CategoryCountInfo, CategorySession}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{SaveMode, SparkSession}
 
 /**
   * Author lzc
@@ -62,6 +62,7 @@ object CategorySessionTop10 {
             }
         }
         // 4. 写入到mysql
+        // 4.1 数据封装到样例类中
         import spark.implicits._
         val resultRDD: RDD[CategorySession] = categorySessionContTop10.flatMap {
             case (cid, sessionCountList) => {
@@ -70,10 +71,11 @@ object CategorySessionTop10 {
                 }
             }
         }
+        // 4.2 使用df写入到mysql中
         val props = new Properties()
         props.setProperty("user", "root")
         props.setProperty("password", "aaa")
-        resultRDD.toDF.write.jdbc("jdbc:mysql://hadoop201:3306/sparkmall0225", "category_top10_session_count", props)
+        resultRDD.toDF.write.mode(SaveMode.Overwrite).jdbc("jdbc:mysql://hadoop201:3306/sparkmall0225", "category_top10_session_count", props)
     }
 }
 
