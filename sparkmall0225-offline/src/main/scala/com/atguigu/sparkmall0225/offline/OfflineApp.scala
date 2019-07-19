@@ -5,7 +5,7 @@ import java.util.UUID
 import com.alibaba.fastjson.JSON
 import com.atguigu.sparkmall0225.common.bean.UserVisitAction
 import com.atguigu.sparkmall0225.common.util.ConfigurationUtil
-import com.atguigu.sparkmall0225.offline.app.{CategorySessionTop10, CategoryTop10App}
+import com.atguigu.sparkmall0225.offline.app.{CategorySessionTop10, CategoryTop10App, PageConversionApp}
 import com.atguigu.sparkmall0225.offline.bean.CategoryCountInfo
 import com.atguigu.sparkmall0225.offline.util.Condition
 import org.apache.spark.rdd.RDD
@@ -33,6 +33,9 @@ object OfflineApp {
         val categoryCountTop10: List[CategoryCountInfo] = CategoryTop10App.statCategoryTop10(spark, userVisitActionRDD, taskId)
         // 需求2:
         CategorySessionTop10.statCategoryTop10Session(spark, categoryCountTop10, userVisitActionRDD, taskId)
+        
+        // 需求3:
+        PageConversionApp.calcPageConversionRate(spark, userVisitActionRDD, readCondition.targetPageFlow, taskId)
         
         
     }
@@ -74,7 +77,7 @@ object OfflineApp {
       *
       * @return
       */
-    def readCondition: Condition = {
+    val readCondition: Condition = {
         val conditionString: String = ConfigurationUtil("conditions.properties").getString("condition.params.json")
         JSON.parseObject(conditionString, classOf[Condition])
     }
