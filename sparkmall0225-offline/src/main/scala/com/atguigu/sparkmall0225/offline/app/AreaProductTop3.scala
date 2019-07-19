@@ -1,5 +1,6 @@
 package com.atguigu.sparkmall0225.offline.app
 
+import com.atguigu.sparkmall0225.offline.udf.AreaClickUDAF
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -10,6 +11,7 @@ object AreaProductTop3 {
     
     def statAreaProductTop3(spark: SparkSession, taskId: String) = {
         spark.sql("use sparkmall0225")
+        spark.udf.register("remark", new AreaClickUDAF)
         // 1. 用行为表和城市表做一个连, 得到地区和城市信息  t1
         spark.sql(
             """
@@ -27,13 +29,13 @@ object AreaProductTop3 {
               |select
               |	area,
               |	product_name,
-              |	count(*) click_count
+              |	count(*) click_count,
+              | remark(city_name) remark
               |from t1
               |group by t1.area, t1.product_name
             """.stripMargin).createOrReplaceTempView("t2")
         
         // 3. 按照点击数降序 t3
-        
         spark.sql(
             """
               |select
@@ -43,13 +45,13 @@ object AreaProductTop3 {
             """.stripMargin).createOrReplaceTempView("t3")
         
         // 4. 取前3
-        
         spark.sql(
             """
               |select
               |	area,
               | product_name,
-              | click_count
+              | click_count,
+              | remark
               |from t3
               |where rank <= 3
             """.stripMargin).show
