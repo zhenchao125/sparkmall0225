@@ -1,9 +1,12 @@
 package com.atguigu.sparkmall0225.offline
 
+import java.util.UUID
+
 import com.alibaba.fastjson.JSON
 import com.atguigu.sparkmall0225.common.bean.UserVisitAction
 import com.atguigu.sparkmall0225.common.util.ConfigurationUtil
-import com.atguigu.sparkmall0225.offline.app.CategoryTop10App
+import com.atguigu.sparkmall0225.offline.app.{CategorySessionTop10, CategoryTop10App}
+import com.atguigu.sparkmall0225.offline.bean.CategoryCountInfo
 import com.atguigu.sparkmall0225.offline.util.Condition
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
@@ -25,10 +28,12 @@ object OfflineApp {
         val userVisitActionRDD: RDD[UserVisitAction] = readUserVisitActionRDD(spark, readCondition)
         userVisitActionRDD.cache()
         userVisitActionRDD.checkpoint()
-        
+        val taskId = UUID.randomUUID().toString
         // 需求1:
-        CategoryTop10App.statCategoryTop10(spark, userVisitActionRDD)
-   
+        val categoryCountTop10: List[CategoryCountInfo] = CategoryTop10App.statCategoryTop10(spark, userVisitActionRDD, taskId)
+        // 需求2:
+        CategorySessionTop10.statCategoryTop10Session(spark, categoryCountTop10, userVisitActionRDD, taskId)
+        
         
     }
     

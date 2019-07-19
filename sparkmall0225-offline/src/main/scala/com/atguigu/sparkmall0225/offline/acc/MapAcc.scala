@@ -14,7 +14,8 @@ class MapAcc extends AccumulatorV2[UserVisitAction, Map[String, (Long, Long, Lon
     // copy累加器
     override def copy(): AccumulatorV2[UserVisitAction, Map[String, (Long, Long, Long)]] = {
         val acc = new MapAcc
-        acc.map = Map[String, (Long, Long, Long)]()
+//        acc.map = Map[String, (Long, Long, Long)]()  // 有误
+        acc.map ++= map
         acc
     }
     
