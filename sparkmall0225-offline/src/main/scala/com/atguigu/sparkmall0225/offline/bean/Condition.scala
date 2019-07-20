@@ -1,4 +1,4 @@
-package com.atguigu.sparkmall0225.offline.util
+package com.atguigu.sparkmall0225.offline.bean
 
 case class Condition(var startDate: String,
                     var endDate: String,

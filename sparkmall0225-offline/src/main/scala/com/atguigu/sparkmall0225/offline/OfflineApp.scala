@@ -6,8 +6,7 @@ import com.alibaba.fastjson.JSON
 import com.atguigu.sparkmall0225.common.bean.UserVisitAction
 import com.atguigu.sparkmall0225.common.util.ConfigurationUtil
 import com.atguigu.sparkmall0225.offline.app.{AreaProductTop3, CategorySessionTop10, CategoryTop10App, PageConversionApp}
-import com.atguigu.sparkmall0225.offline.bean.CategoryCountInfo
-import com.atguigu.sparkmall0225.offline.util.Condition
+import com.atguigu.sparkmall0225.offline.bean.{CategoryCountInfo, Condition}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
