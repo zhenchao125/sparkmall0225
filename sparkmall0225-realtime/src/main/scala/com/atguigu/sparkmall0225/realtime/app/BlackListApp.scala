@@ -19,7 +19,6 @@ object BlackListApp {
     
     // 检测用户是否要加入到黑名单
     def checkUserToBlackList(ssc: StreamingContext, adsInfoDStream: DStream[AdsInfo]) = {
-        
         // redis连接0 ×
         adsInfoDStream.foreachRDD(rdd => {
             // redis连接1  ×
@@ -30,10 +29,10 @@ object BlackListApp {
                 adsInfoIt.foreach(adsInfo => {
                     println(adsInfo.userId)
                     val field = s"${adsInfo.dayString}:${adsInfo.userId}:${adsInfo.adsId}"
-                    client.hincrBy(dayUserAdsCount, field, 1)
-                    
+                    // 返回值就是增加后的值
+                    val clickCount = client.hincrBy(dayUserAdsCount, field, 1)
                     //2. 加入黑名单
-                    val clickCount: String = client.hget(dayUserAdsCount, field)
+//                    val clickCount: String = client.hget(dayUserAdsCount, field)
                     if (clickCount.toLong > 100000) {
                         client.sadd(blackList, adsInfo.userId)
                     }
@@ -42,8 +41,6 @@ object BlackListApp {
                 client.close() // 不是真正的关闭连接, 而是把这个连接交个连接池管理
             })
         })
-        
-        
     }
     
     // 过滤黑名单
