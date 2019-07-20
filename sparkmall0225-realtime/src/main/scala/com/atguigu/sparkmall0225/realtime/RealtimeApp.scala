@@ -1,7 +1,7 @@
 package com.atguigu.sparkmall0225.realtime
 
 import com.atguigu.sparkmall0225.common.util.MyKafkaUtil
-import com.atguigu.sparkmall0225.realtime.app.{BlackListApp, DayAreaCityAdsApp}
+import com.atguigu.sparkmall0225.realtime.app.{BlackListApp, DayAreaAdsTop3App, DayAreaCityAdsApp}
 import com.atguigu.sparkmall0225.realtime.bean.AdsInfo
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.spark.streaming.dstream.{DStream, InputDStream}
@@ -36,7 +36,10 @@ object RealtimeApp {
 //        BlackListApp.checkUserToBlackList(ssc, filteredAdsInfoDSteam)
         
         // 需求2:
-        DayAreaCityAdsApp.calcDayAreaCityAdsClickCount(ssc, filteredAdsInfoDSteam)
+       val lastDStream =  DayAreaCityAdsApp.calcDayAreaCityAdsClickCount(ssc, filteredAdsInfoDSteam)
+        
+        // 需求3:
+        DayAreaAdsTop3App.calcDayAreaAdsTop3(ssc, lastDStream)
         
         ssc.start()
         ssc.awaitTermination()

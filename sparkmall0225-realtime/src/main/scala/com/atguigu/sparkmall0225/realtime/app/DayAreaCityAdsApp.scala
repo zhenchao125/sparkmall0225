@@ -42,6 +42,7 @@ object DayAreaCityAdsApp {
                 client.close()
             })
         })
+        resltDStream  //给后面需求使用
         
     }
 }
