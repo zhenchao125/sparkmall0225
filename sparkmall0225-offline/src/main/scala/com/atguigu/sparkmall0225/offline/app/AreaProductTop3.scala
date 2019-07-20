@@ -1,7 +1,10 @@
 package com.atguigu.sparkmall0225.offline.app
 
+import java.util.Properties
+
+import com.atguigu.sparkmall0225.common.util.ConfigurationUtil
 import com.atguigu.sparkmall0225.offline.udf.AreaClickUDAF
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{SaveMode, SparkSession}
 
 /**
   * Author lzc
@@ -43,7 +46,12 @@ object AreaProductTop3 {
               |	rank() over(partition by t2.area order by click_count desc) rank
               |from t2
             """.stripMargin).createOrReplaceTempView("t3")
-        
+    
+        val conf = ConfigurationUtil("config.properties")
+        val props = new Properties()
+        props.setProperty("user", "root")
+        props.setProperty("password", "aaa")
+    
         // 4. 取前3
         spark.sql(
             """
@@ -54,9 +62,8 @@ object AreaProductTop3 {
               | remark
               |from t3
               |where rank <= 3
-            """.stripMargin).show
-        
-        
+            """.stripMargin).write.mode(SaveMode.Overwrite)
+            .jdbc(conf.getString("jdbc.url"), "area_click_top10", props)
     }
 }
 
