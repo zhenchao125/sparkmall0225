@@ -32,7 +32,7 @@ object BlackListApp {
                     // 返回值就是增加后的值
                     val clickCount = client.hincrBy(dayUserAdsCount, field, 1)
                     //2. 加入黑名单
-//                    val clickCount: String = client.hget(dayUserAdsCount, field)
+                    //                    val clickCount: String = client.hget(dayUserAdsCount, field)
                     if (clickCount.toLong > 100000) {
                         client.sadd(blackList, adsInfo.userId)
                     }
@@ -56,7 +56,6 @@ object BlackListApp {
                 !blackListIds.contains(adsInfo.userId)
             })
         })
-        
     }
 }
 
@@ -76,14 +75,14 @@ object BlackListApp {
 		
 		key										value
 		
-		"day:userId:adsId:" + 年月日			field			vaue
+		"day:userId:adsId:" + 年月日			    field			value
 												userId:adsId    1
 												
 		----
 		
 		key										value
 		
-		"day:userId:adsId"						field						vaue
+		"day:userId:adsId"						field						value
 												dayString:userId:adsId    	1
 	
 	2. 超过范围的加入黑名单
